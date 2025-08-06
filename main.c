@@ -53,10 +53,10 @@
 */
 #define SCALE 1000000LL // Fixed-point scale factor (S = 10^6)
 
-uint32_t start_time = 0;
-uint32_t end_time = 0;
-uint32_t execution_time = 0;
-uint64_t checksum = 0;
+uint32_t start_time = 0;//utilized in benchmarking
+uint32_t end_time = 0;//utilized in benchmarking
+uint32_t execution_time = 0;//measure of how long ittook for the program to finish executing
+uint64_t checksum = 0; //the total number of coordinates that fall into the mandelbrot set
 
 int width  = 0;
 int height = 0;
@@ -219,18 +219,21 @@ static void MX_GPIO_Init(void)
 uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int max_iterations){
   uint64_t mandelbrot_sum = 0;
     //TODO: Complete the function implementation
-    for(int y = 0 ; y < height; y++){
+
+   /*we are going through the complex plane multiple times
+   any coordinate left after that iteration falls under the mandelbrot set*/
+    for(int y = 0 ; y < height; y++){ 
     	for(int x = 0 ; x < width ; x++ ){
-    		int64_t x0 = (((int64_t)((x * 3500000LL) / width)) - 2500000LL);
-    		int64_t y0 = (((int64_t)((y * 2000000LL) / height)) - 1000000LL);
+    		int64_t x0 = (((int64_t)((x * 3500000LL) / width)) - 2500000LL); // we are trying keeping the set in between [-2.5 ,1.0]
+    		int64_t y0 = (((int64_t)((y * 2000000LL) / height)) - 1000000LL);//we are keeping or taking the cooridantes in between [-1,1]
     		int64_t xi = 0; int64_t yi = 0;
     		int iteration = 0;
     		while((iteration <  max_iterations) && ((((xi * xi)/ SCALE) + ((yi * yi)/ SCALE)) <= 4000000LL)){
-    			int temp  = ((xi * xi)/ SCALE) - ((yi * yi)/ SCALE);
-    			yi = ((2LL*(xi * yi)/ SCALE) + y0);
-    			xi = temp + x0;
+    			int temp  = ((xi * xi)/ SCALE) - ((yi * yi)/ SCALE);//This is the imaginary representation of Z^2
+    			yi = ((2LL*(xi * yi)/ SCALE) + y0);//this is the real z^2
+    			xi = temp + x0;//this is the real representation of z^2 +c
 
-    			iteration++;
+    			iteration++;//keeping track of the number of times we have done iterations
     		}
     		mandelbrot_sum += iteration;
     	}
@@ -239,20 +242,23 @@ uint64_t calculate_mandelbrot_fixed_point_arithmetic(int width, int height, int 
 
 }
 
-//TODO: Mandelbroat using variable type double
+//TODO: Mandelbroat using variable type double(double precision)
 uint64_t calculate_mandelbrot_double(int width, int height, int max_iterations){
     uint64_t mandelbrot_sum = 0;
     //TODO: Complete the function implementation
+    //everything  is in (double precision)
+   /*we are going through the complex plane multiple times
+   any coordinate left after that iteration falls under the mandelbrot set*/
     for(int y = 0 ; y < height ; y++){
     	for(int x = 0 ; x < width ; x++ ){
-    		double x0  = ((((double)(x / width)) * 3.5 ) - 2.5);
-    		double y0  = ((((double)(y / width)) * 2.0 ) - 1.0);
+    		double x0  = ((((double)(x / width)) * 3.5 ) - 2.5);// we are keeping the set in between [-2.5 ,1.0]
+    		double y0  = ((((double)(y / width)) * 2.0 ) - 1.0);//we are keeping or taking the cooridantes in between [-1,1]
     		double xi = 0.0; double yi = 0.0;
-    		double iteration =  0;
+    		double iteration =  0;//keeping track of the number of times we have done iterations
     		while((iteration < max_iterations) && (((xi * xi) + (yi * yi)) <= 4.0)){
-    			double temp = ((xi * xi) - (yi * yi));
-    			yi  = (2.0 * (xi * yi) + y0);
-    			xi = (temp + x0);
+    			double temp = ((xi * xi) - (yi * yi));//This is the imaginary representation of Z^2
+    			yi  = (2.0 * (xi * yi) + y0);//this is the real z^2
+    			xi = (temp + x0);//this is the real representation of z^2 +c
     			iteration++;
     		}
     		mandelbrot_sum += iteration;
@@ -294,3 +300,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
