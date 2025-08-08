@@ -52,6 +52,7 @@
   initial width and height maybe or you might opt for an array??
 */
 #define SCALE 1000000LL // Fixed-point scale factor (S = 10^6)
+uint8_t image_Dimensions[5] = {128,160,192,224,256};
 
 uint32_t start_time = 0;//utilized in benchmarking
 uint32_t end_time = 0;//utilized in benchmarking
@@ -116,7 +117,8 @@ int main(void)
   
   
   //TODO: Call the Mandelbrot Function and store the output in the checksum variable defined initially
-  checksum  = calculate_mandelbrot_fixed_point_arithmetic(100,100,MAX_ITER);
+  checksum  = calculate_mandelbrot_fixed_point_arithmetic(image_Dimensions[0], image_Dimensions[0],MAX_ITER);
+  // checksum  = calculate_mandelbrot_double(image_Dimensions[0], image_Dimensions[0], MAX_ITER);
   
 
   //TODO: Record the end time
@@ -300,4 +302,5 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
 
